@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>灵魂底色测试 - 你的交界地人格</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Georgia, 'Times New Roman', serif;
+            background-color: #0a0a0a;
+            color: #d4af37;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 680px;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .page {
+            display: none;
+            opacity: 1;
+            transition: opacity 0.4s ease;
+            text-align: center;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .page.fade-out {
+            opacity: 0;
+        }
+
+        .welcome-page {
+            padding: 60px 20px;
+        }
+
+        .main-title {
+            font-size: 2.5rem;
+            color: #d4af37;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            margin-bottom: 20px;
+            letter-spacing: 4px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #8b0000;
+            margin-bottom: 40px;
+            font-style: italic;
+            line-height: 1.8;
+        }
+
+        .intro-text {
+            font-size: 1rem;
+            color: #c9a961;
+            line-height: 2;
+            margin-bottom: 50px;
+            opacity: 0.9;
+        }
+
+        .start-btn {
+            background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+            border: 2px solid #d4af37;
+            color: #d4af37;
+            padding: 18px 50px;
+            font-size: 1.2rem;
+            font-family: Georgia, serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+            letter-spacing: 2px;
+        }
+
+        .start-btn:hover {
+            background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
+            transform: scale(1.02);
+        }
+
+        .quiz-page {
+            padding: 40px 0;
+        }
+
+        .progress-container {
+            margin-bottom: 40px;
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            color: #d4af37;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #2a2a2a;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #d4af37, #f4d160);
+            transition: width 0.4s ease;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+
+        .question-container {
+            background: linear-gradient(180deg, #151515 0%, #0d0d0d 100%);
+            border: 1px solid #3a3a3a;
+            padding: 40px 30px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .question-number {
+            font-size: 0.85rem;
+            color: #8b0000;
+            margin-bottom: 15px;
+            letter-spacing: 3px;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            color: #d4af37;
+            line-height: 1.8;
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background: linear-gradient(180deg, #1f1f1f 0%, #151515 100%);
+            border: 1px solid #4a4a4a;
+            color: #c9a961;
+            padding: 20px 25px;
+            font-size: 1rem;
+            font-family: Georgia, serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            line-height: 1.6;
+        }
+
+        .option-btn:hover {
+            border-color: #d4af37;
+            color: #d4af37;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+            transform: scale(1.02);
+        }
+
+        .prev-btn {
+            margin-top: 20px;
+            background: transparent;
+            border: 1px solid #4a4a4a;
+            color: #c9a961;
+            padding: 12px 25px;
+            font-family: Georgia, serif;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .prev-btn:hover {
+            border-color: #d4af37;
+            color: #d4af37;
+        }
+
+        .loading-page {
+            padding: 100px 20px;
+        }
+
+        .loading-text {
+            font-size: 1.4rem;
+            color: #d4af37;
+            margin-bottom: 40px;
+            letter-spacing: 3px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .loading-symbol {
+            font-size: 3rem;
+            color: #d4af37;
+            animation: rotate 2s linear infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .result-page {
+            padding: 40px 0;
+        }
+
+        .result-container {
+            background: linear-gradient(180deg, #151515 0%, #0a0a0a 100%);
+            border: 2px solid #d4af37;
+            padding: 50px 30px;
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.2);
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            color: #8b0000;
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+        }
+
+        .result-title {
+            font-size: 2rem;
+            color: #d4af37;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .result-quote {
+            font-style: italic;
+            color: #c9a961;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-left: 3px solid #8b0000;
+            background: rgba(139, 0, 0, 0.1);
+            text-align: left;
+        }
+
+        .result-analysis {
+            color: #b8a050;
+            font-size: 1rem;
+            line-height: 2;
+            text-align: left;
+            margin-bottom: 40px;
+        }
+
+        .restart-btn {
+            background: transparent;
+            border: 1px solid #d4af37;
+            color: #d4af37;
+            padding: 15px 40px;
+            font-size: 1rem;
+            font-family: Georgia, serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 2px;
+        }
+
+        .restart-btn:hover {
+            background: rgba(212, 175, 55, 0.1);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        @media (max-width: 600px) {
+            .main-title { font-size: 1.8rem; }
+            .question-text { font-size: 1.1rem; }
+            .result-title { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="welcomePage" class="page welcome-page active">
+            <h1 class="main-title">交界地灵魂底色测试</h1>
+            <p class="subtitle">面对深渊时的下意识，即是你的倒影</p>
+            <p class="intro-text">
+                抛开善恶的伪装与阵营的旗帜，<br>
+                在这片被死亡与野心浸透的土地上，<br><br>
+                面对背叛、绝境与无意义的受苦，<br>
+                你的本能，会做出怎样的抉择？<br><br>
+                十五道生存的拷问，<br>
+                将揭示你灵魂深处的那道暗光。
+            </p>
+            <button class="start-btn" onclick="startQuiz()">触碰赐福</button>
+        </div>
+
+        <div id="quizPage" class="page quiz-page">
+            <div class="progress-container">
+                <p class="progress-text"><span id="currentQuestion">1</span> / <span id="totalQuestions">15</span></p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 6.67%"></div>
+                </div>
+            </div>
+            <div class="question-container">
+                <p class="question-number" id="questionNumber">第一题</p>
+                <h2 class="question-text" id="questionText"></h2>
+            </div>
+            <div class="options-container" id="optionsContainer"></div>
+            <button class="prev-btn" id="prevBtn" onclick="prevQuestion()">← 上一题</button>
+        </div>
+
+        <div id="loadingPage" class="page loading-page">
+            <p class="loading-text">正在读取你的追忆...</p>
+            <div class="loading-symbol">✦</div>
+        </div>
+
+        <div id="resultPage" class="page result-page">
+            <div class="result-container">
+                <p class="result-label">你的灵魂底色是</p>
+                <h1 class="result-title" id="resultTitle"></h1>
+                <blockquote class="result-quote" id="resultQuote"></blockquote>
+                <p class="result-analysis" id="resultAnalysis"></p>
+                <button class="restart-btn" onclick="restartQuiz()">再次触碰赐福</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============ 角色数据 ============
+        const characters = {
+            ranni: {
+                name: "暗月公主 菈妮",
+                quote: "我已经厌倦了被操控的命运...我要亲手书写属于自己的星辰。",
+                analysis: "你的灵魂底色与菈妮惊人地契合。你拥有高度独立的灵魂，极度警惕任何形式的权威与“既定规则”。面对困境，你习惯用冷酷的理性和怀疑去解构一切，从不轻信表面的利益。你极度厌恶被操控，宁可背负叛徒的骂名，走上一条冰冷孤独的夜路，也要把命运死死攥在自己手里。表面上你疏离冷漠，但这只是你保护真实自我与极少数珍视之人的硬壳。",
+                dimensionProfile: { order: -2, faith: -1, power: -1, wisdom: 3, autonomy: 3, emotion: -2, ambition: 1, endurance: 0 }
+            },
+            alexander: {
+                name: "战士壶 亚历山大",
+                quote: "能与你这样的强者并肩作战，是我作为战士的荣耀！",
+                analysis: "你的灵魂中燃烧着纯粹的战士之魂。你从不掩饰自己的野心与欲望，面对危险时，你的第一反应往往是兴奋而非恐惧。你讨厌弯弯绕绕的算计，坚信力量与直面困难的勇气才是破局的关键。你重视沿途的每一次交锋，认为生命的意义就在于不断的挑战与变强。你的坦荡有时会让你吃亏，但这种原始的生命力极具感染力。",
+                dimensionProfile: { order: 1, faith: 1, power: 2, wisdom: -1, autonomy: 0, emotion: 3, ambition: 1, endurance: 2 }
+            },
+            blaidd: {
+                name: "半狼 布莱泽",
+                quote: "我...不会背叛。即便是诅咒，也无法让我对她背弃。",
+                analysis: "你的灵魂散发着一种古典的悲剧色彩。在充满算计的世界里，你有着罕见的底线和难以割舍的道德感。你不擅长做精致的利己主义者，别人眼中的“愚蠢执念”，正是你赖以生存的信仰。面对他人的苦难，你很难做到真正的冷眼旁观。你极其珍视羁绊，甚至愿意为了自己认定的原则或某个人，默默忍受巨大的痛苦。忠诚是你的铠甲，也是你的软肋。",
+                dimensionProfile: { order: 1, faith: 1, power: 1, wisdom: 0, autonomy: -2, emotion: 1, ambition: 0, endurance: 2 }
+            },
+            melina: {
+                name: "防女 梅琳娜",
+                quote: "我也有...必须守护的人，和必须完成的使命。",
+                analysis: "你的灵魂承载着极其强大的“忍耐力”。面对受苦、绝境甚至背叛，你很少歇斯底里，而是展现出一种平静的接纳。你做事极具目的性，为了达成心中的那个终极目标，你能够容忍过程中的一切痛苦、非议甚至自我的牺牲。你对世界的看法是灰色的，不强求完美，只求在破败中寻找那一丝继续走下去的意义。外表内敛，内心却有着骇人的觉悟。",
+                dimensionProfile: { order: 1, faith: 2, power: -1, wisdom: 1, autonomy: -1, emotion: 0, ambition: -1, endurance: 2 }
+            },
+            millicent: {
+                name: "纯净金针 米莉森",
+                quote: "我不想成为任何人的复制品...我只想做我自己。",
+                analysis: "你的灵魂充满了对“自我完整性”的渴望。你可能曾经迷茫，甚至一度被他人或环境塑造成你不喜欢的样子。但一旦你觉醒，便会爆发出极其强烈的自主意识。你极度反感被当成工具或某人的附庸。面对利益的诱惑和生存的压力，你宁愿选择一条艰难的自毁之路，也绝不妥协放弃自己的骄傲。你的感性与决绝，交织成了最锋利的剑刃。",
+                dimensionProfile: { order: -1, faith: 1, power: -1, wisdom: 1, autonomy: 3, emotion: 2, ambition: 0, endurance: 1 }
+            },
+            radahn: {
+                name: "碎星 拉塔恩",
+                quote: "即便流星坠落，我的旗帜依然矗立！",
+                analysis: "你的灵魂带着一种不合时宜的英雄主义。你崇尚绝对的力量，但也极度重视秩序与荣誉。你不会为了力量去使用那些你认为“下作”或“毫无底线”的手段。面对绝境，你习惯于独自抗下所有压力，用最强硬的姿态正面击碎一切。你有一颗强者之心，愿意庇护弱小，但同时也带有一种高高在上的傲慢，认为只有自己能终结这场乱局。",
+                dimensionProfile: { order: 3, faith: 0, power: 3, wisdom: 1, autonomy: 0, emotion: -1, ambition: 2, endurance: 2 }
+            },
+            patches: {
+                name: "无缘人 帕奇",
+                quote: "哎呀呀...又被我骗到了呢。不过说真的，谢谢你没有杀我。",
+                analysis: "你的灵魂带着狡猾与极致的实用主义。你早已看透了这个世界的荒诞，因此绝不轻易付出信任，更不会被什么宏大的口号洗脑。在危险面前，你的雷达极其敏锐，生存和保全是你的第一法则，“打不过就跑”被你奉为圭臬。但有趣的是，你绝非纯粹的恶人。在你黑色幽默和市侩的伪装下，其实藏着对真正纯粹事物的一丝敬畏与恻隐之心。",
+                dimensionProfile: { order: -2, faith: -2, power: 0, wisdom: 2, autonomy: 1, emotion: 1, ambition: 0, endurance: -1 }
+            },
+            seluvis: {
+                name: "魔法师 瑟濂",
+                quote: "弱者没有资格谈论尊严。只有力量，才能定义一切。",
+                analysis: "你的灵魂被冰冷且狂热的求知欲所驱动。对你而言，道德、情感、甚至他人的生命，都只是探索宇宙真理和获取更高阶力量的“耗材”。你有着极高的智商和严密的逻辑，做事极度理性且冷酷。只要收益足够大，你毫不介意踏破禁忌的底线。你只尊重同样具备顶级智慧或力量的人，面对庸人，你连伪装善良的耐心都没有。",
+                dimensionProfile: { order: 0, faith: -1, power: 2, wisdom: 3, autonomy: 2, emotion: -2, ambition: 2, endurance: 0 }
+            },
+            fia: {
+                name: "死眠少女 菲雅",
+                quote: "死亡不是终点...而是另一段旅程的开始。让我拥抱你，好吗？",
+                analysis: "你的灵魂有一种诡异却温暖的包容力。你对于那些被主流秩序排斥、视为禁忌或污秽的事物，不仅没有恐惧，反而会产生一种隐秘的共鸣与同情。你更关注个体的痛苦而非宏大的规则。你的情感深邃且执着，一旦认定某件事物，你会展现出一种柔弱却极其坚韧、甚至有些偏执的力量。在别人眼中的异端，往往是你心中的归宿。",
+                dimensionProfile: { order: -1, faith: 3, power: -2, wisdom: 0, autonomy: -1, emotion: 3, ambition: -1, endurance: 1 }
+            },
+            bernahl: {
+                name: "叛律者 贝纳尔",
+                quote: "我背叛了指头之母...但我从未背叛自己。",
+                analysis: "你的灵魂刻满了彻底的反叛烙印。你可能曾经笃信某种秩序或理想，但当你看透其虚伪的本质后，你的信仰崩塌转化为极致的破坏欲。你极度厌恶伪善和没有意义的受苦，如果这个世界从根子上就是烂的，你倾向于直接掀翻桌子，哪怕代价是毁灭一切。你不再畏惧死亡与罪恶，因为在你看来，在虚假中苟活才是最大的折磨。",
+                dimensionProfile: { order: -3, faith: -2, power: 1, wisdom: 0, autonomy: 3, emotion: 0, ambition: 1, endurance: 2 }
+            }
+        };
+
+        // ============ 题目数据 (重构版隐藏意图) ============
+        const questions = [
+            {
+                text: "你在一片漆黑的地下墓穴中迷失了方向，身上的红露滴圣杯瓶（血瓶）只剩最后一口。前方传来了沉重的铠甲脚步声，而身后是你刚才好不容易避开的重重机关。你的下意识反应是？",
+                options: [
+                    { text: "立即喝掉最后一口血瓶保持满状态，主动迎战。只有杀死前方的未知，才能打通生路。", scores: { power: 2, ambition: 1 } },
+                    { text: "捏紧武器潜伏在阴影中。观察对方的巡逻路线，寻找背刺的机会，绝不正面对抗。", scores: { wisdom: 2, autonomy: 1 } },
+                    { text: "感到绝望但依然保持冷静，开始在脑海中复盘来时的路线，评估原路折返生还的概率。", scores: { order: 1, endurance: 2 } },
+                    { text: "心跳加速，产生一种近乎疯狂的兴奋感——越是绝境，越能激发我突破极限的渴望。", scores: { emotion: 2, autonomy: 1 } }
+                ]
+            },
+            {
+                text: "你在悬崖边发现了一具被推下去的褪色者尸体，他手里紧紧攥着一件极其稀有的极品护符，但在尸体上方，用鲜血写着一行字：“拿走它，你就会被诅咒”。你会怎么做？",
+                options: [
+                    { text: "毫不犹豫地拿走。在交界地，力量就是一切，什么诅咒都比不上弱小可怕。", scores: { power: 2, ambition: 1 } },
+                    { text: "仔细观察四周环境和那行血字，判断这到底是真的诅咒，还是别人为了独吞宝物设下的心理陷阱。", scores: { wisdom: 2, autonomy: 1 } },
+                    { text: "放弃护符。不是因为害怕诅咒，而是觉得这东西沾染了太多不洁的执念，让人感到不适。", scores: { faith: 1, emotion: 1 } },
+                    { text: "对死者的遭遇感到一丝同情。不仅不拿护符，还会在旁边放下一朵特莉夏之花，然后离开。", scores: { order: 1, emotion: 2 } }
+                ]
+            },
+            {
+                text: "你花费了整整五个小时，死了无数次，终于击败了一个极其艰难的地下墓穴BOSS。但你发现门后并没有你期待的宝藏，只有一片荒芜的废墟和一具枯骨。此时你的感受是？",
+                options: [
+                    { text: "一阵难以抑制的空虚和愤怒——我的努力和付出，竟然毫无意义，这世界烂透了。", scores: { emotion: 2, autonomy: 1, order: -1 } },
+                    { text: "平静地接受。交界地本来就是个破败的世界，战斗胜利、活下来本身就是唯一的奖赏。", scores: { endurance: 2, order: 1 } },
+                    { text: "走上前仔细敲打墙壁，检查那具枯骨和废墟，寻找任何可能错过的蛛丝马迹或隐藏通道。", scores: { wisdom: 2, endurance: 1 } },
+                    { text: "觉得有些好笑，甚至有一丝释然。这种荒诞的结局，倒也符合这个疯狂的世界。", scores: { autonomy: 2, emotion: 1 } }
+                ]
+            },
+            {
+                text: "你在荒野遇到一个衣衫褴褛的流浪商人，他愿意用他身上的一把神秘钥匙，换取你身上辛苦攒下的所有卢恩（金币）。他看起来非常绝望。你会？",
+                options: [
+                    { text: "换！高风险往往意味着高回报，我愿意为了未知的秘密赌一把。", scores: { ambition: 2, autonomy: 1 } },
+                    { text: "拔出武器威胁他，逼他说出钥匙真正的来历，如果不说就直接动手抢。", scores: { power: 2, order: -1 } },
+                    { text: "果断拒绝。稳扎稳打提升自己的等级才是王道，不把资源浪费在虚无缥缈的事情上。", scores: { order: 2, wisdom: 1 } },
+                    { text: "留着卢恩，但出于同情，丢给他一点碎星肉干或者低级材料让他果腹。", scores: { emotion: 2, faith: 1 } }
+                ]
+            },
+            {
+                text: "面对一个卡了你很久、拥有“一招秒杀”机制的守关强敌，你会采取哪种策略？",
+                options: [
+                    { text: "去其他地方疯狂刷级，直到我的属性足以用数值碾压他。", scores: { power: 1, endurance: 2 } },
+                    { text: "翻找背包，更换特定的防具、附魔和战灰，针对他的弱点专门配装。", scores: { wisdom: 2, autonomy: 1 } },
+                    { text: "什么都不换。一次次冲进去，死记硬背他的每一个抬手动作，直到形成肌肉记忆。", scores: { order: 1, endurance: 2 } },
+                    { text: "毫不犹豫地摇骨灰（召唤灵体）或者召唤其他玩家，能群殴绝不单挑。", scores: { wisdom: 1, emotion: 1, power: -1 } }
+                ]
+            },
+            {
+                text: "你在悬崖边看到地上有一条其他玩家留下的发光谏言：“试着跳下去吧，前有隐藏道路。”下方一片漆黑。你的反应是？",
+                options: [
+                    { text: "直接跳！探索未知的刺激感值得用一条命去换。", scores: { autonomy: 2, ambition: 1 } },
+                    { text: "掏出七彩石丢下去，听落地的声音判断高度是否致死。", scores: { wisdom: 2, order: 1 } },
+                    { text: "找找附近有没有一大片死人的血迹，看看别人是不是都在这摔死了。", scores: { wisdom: 1, faith: 1 } },
+                    { text: "理都不理，直接走开。这游戏里到处都是骗人送死的乐子人。", scores: { order: 1, endurance: 1 } }
+                ]
+            },
+            {
+                text: "你在一座废弃书库深处，找到了一卷沾满灰尘的手札，里面记录了关于这个世界神明极其肮脏、违背伦理的黑历史。你会怎么处理它？",
+                options: [
+                    { text: "直接烧毁。有些真相一旦流传出去，会引发无法控制的动荡，秩序比真相更重要。", scores: { order: 2, power: 1 } },
+                    { text: "小心藏好。这可是极具价值的筹码，在未来的博弈中能发挥巨大作用。", scores: { ambition: 2, wisdom: 1 } },
+                    { text: "设法将其公之于众。无论结果如何，虚伪的面具都必须被撕下。", scores: { autonomy: 2, emotion: 1 } },
+                    { text: "如饥似渴地研读，试图从中反向推导出这个世界真正的物理和魔法底层逻辑。", scores: { wisdom: 2, faith: -1 } }
+                ]
+            },
+            {
+                text: "一个在游戏前期帮助过你很多次的友善NPC，因为染上腐败正在痛苦地变异成怪物，他用最后的理智哀求你杀了他。你会？",
+                options: [
+                    { text: "给他一个痛快。这是对他尊严最后的维护，也是最理性的选择。", scores: { order: 1, emotion: -1, wisdom: 1 } },
+                    { text: "不顾一切地去满世界寻找解药，哪怕我知道希望渺茫。", scores: { faith: 2, endurance: 1 } },
+                    { text: "转身逃跑。我实在无法亲手杀死曾有恩于我的人，也无法直视他的惨状。", scores: { emotion: 2, autonomy: -1 } },
+                    { text: "在一旁冷眼观察他变异的整个过程，记录下腐败侵蚀人体的第一手资料。", scores: { wisdom: 2, power: 1, emotion: -2 } }
+                ]
+            },
+            {
+                text: "经过一整天的殊死搏斗，你终于坐在了一个安全的赐福（篝火）旁休息，看着自己满是伤痕的双手。你此刻脑海中冒出的想法是？",
+                options: [
+                    { text: "“还要再杀多少人，跨过多少尸体，我才能走到最后？”", scores: { endurance: 1, emotion: 1 } },
+                    { text: "“我所做的一切，真的对修复这个支离破碎的世界有意义吗？”", scores: { faith: 1, order: 1 } },
+                    { text: "“刚才那个BOSS的连招，如果我能在第二段接翻滚，输出空间会更大。”", scores: { wisdom: 2, power: 1 } },
+                    { text: "“我的肌肉和反应比昨天更锐利了，我正在变得不可阻挡。”", scores: { power: 2, ambition: 1 } }
+                ]
+            },
+            {
+                text: "你在打高难BOSS时召唤了一个其他玩家帮忙，结果关键时刻他为了自己活命，故意把你卡在死角，导致你被BOSS劈死。你的反应是？",
+                options: [
+                    { text: "极其暴怒，记住他的ID，如果有机会入侵绝对要把他杀回老家。", scores: { emotion: 2, power: 1 } },
+                    { text: "无语地笑出声。算了，在这个尔虞我诈的交界地，背刺太正常了。", scores: { autonomy: 1, endurance: 1 } },
+                    { text: "直接拉黑，然后开始复盘刚才的走位，认为把希望寄托在别人身上本来就是错的。", scores: { wisdom: 2, order: 1 } },
+                    { text: "感到一阵深深的心寒，开始怀疑在这片土地上是否还存在真正的善意。", scores: { emotion: 2, faith: 1 } }
+                ]
+            },
+            {
+                text: "一个诡异的灵体向你献上一把流淌着黑血的短剑：“只要用它划破手腕，献祭你一半的生命上限，它就能一击秒杀前方的半神。”你会接受吗？",
+                options: [
+                    { text: "毫不犹豫地接受。极致的攻击就是最好的防御，只要我不被打中就行了。", scores: { power: 2, ambition: 1 } },
+                    { text: "断然拒绝。我依靠的是自己千锤百炼的均衡实力，绝不沾染这种投机取巧的邪门歪道。", scores: { order: 2, autonomy: 1 } },
+                    { text: "先拿上，但把它当成压箱底的最后手段，不到真正绝望的死局绝对不用。", scores: { wisdom: 1, endurance: 1 } },
+                    { text: "不去碰剑，而是试图审问灵体这把剑的由来以及这种邪恶魔法的运作机制。", scores: { wisdom: 2, faith: -1 } }
+                ]
+            },
+            {
+                text: "你踏入一座没有腐败与战火的绝美城池。但你发现，这里的居民全部被一种高阶魔法禁锢在一种虚假的、没有痛苦的幻梦中。你会？",
+                options: [
+                    { text: "拔剑破坏魔法源头。宁可让他们在残酷的现实中醒来面对死亡，也不能活在虚假里。", scores: { autonomy: 2, emotion: 1 } },
+                    { text: "默默离开。交界地已经够苦了，这种虚假的安宁，或许也是一种仁慈的救赎。", scores: { order: 1, endurance: 1, faith: 1 } },
+                    { text: "不关心他们的死活，只对这个能够维持全城幻梦的高阶魔法原理感兴趣。", scores: { wisdom: 2, ambition: 1 } },
+                    { text: "趁他们无法反抗，把城里值钱的资源和道具全部搜刮走。", scores: { power: 1, ambition: 2, emotion: -1 } }
+                ]
+            },
+            {
+                text: "一位全知全能的先知冷冷地告诉你：“无论你多么努力，你的终局注定是失败与被遗忘，这是世界法则刻好的命轨。”你的回应是？",
+                options: [
+                    { text: "拔剑斩向先知：“我的命，只有我手里的剑说了算！”", scores: { power: 2, autonomy: 2 } },
+                    { text: "咬紧牙关：“那就让我看看，是世界的法则硬，还是我的骨头硬。”", scores: { endurance: 2, ambition: 1 } },
+                    { text: "轻蔑一笑：“如果注定没有结果，那我就把这个烂透的世界拉着一起陪葬。”", scores: { emotion: 2, autonomy: 1, order: -2 } },
+                    { text: "冷静分析：“既然你都能看到未来，说明所谓的‘法则’存在观测漏洞，我要找出它。”", scores: { wisdom: 2, order: -1 } }
+                ]
+            },
+            {
+                text: "历经千难万险，你终于踏着无数尸骨来到了王座前。王座空无一人，冰冷且布满灰尘。你走上前，第一件做的事是？",
+                options: [
+                    { text: "毫不犹豫地坐上去。这是我应得的战利品，从今以后，我就是规则的制定者。", scores: { ambition: 3, power: 1 } },
+                    { text: "转身背对王座离开。把权力的王冠抛在脑后，真正的自由是在那片无垠的星空下。", scores: { autonomy: 3, wisdom: 1 } },
+                    { text: "双膝跪地。脑海中闪过一路走来死去的同伴，被一种巨大的虚无感和悲伤淹没。", scores: { emotion: 2, endurance: 1 } },
+                    { text: "施展祈祷或魔法，试图净化这把椅子上的血迹与腐败，准备开启一个严谨的新纪元。", scores: { order: 2, faith: 2 } }
+                ]
+            },
+            {
+                text: "屏幕上弹出巨大的红色字眼“YOU DIED”（你死了）。面对这种已经发生过上百次的场景，你现实中真实的生理反应往往是？",
+                options: [
+                    { text: "深吸一口气，大脑飞速回放刚才死前那一刻的操作失误，然后秒按复活键。", scores: { wisdom: 1, endurance: 2 } },
+                    { text: "破口大骂一声，把手柄/鼠标捏得嘎吱作响，心跳急剧加速。", scores: { emotion: 2, power: 1 } },
+                    { text: "面无表情地往后一靠，拿起水杯喝口水，觉得有些累了，想去阳台抽根烟或吹吹风。", scores: { autonomy: 1, order: 1 } },
+                    { text: "呆呆地看着黑屏上的倒影，产生一种“我到底在为了什么受苦”的哲学怀疑。", scores: { faith: 1, emotion: 1 } }
+                ]
+            }
+        ];
+
+        // ============ 应用状态 ============
+        let currentQuestionIndex = 0;
+        let answerHistory = []; // 记录每题的答案，用于回退
+        // 核心评分维度
+        let scores = {
+            order: 0, faith: 0, power: 0, wisdom: 0,
+            autonomy: 0, emotion: 0, ambition: 0, endurance: 0
+        };
+
+        // ============ DOM 元素 ============
+        const welcomePage = document.getElementById('welcomePage');
+        const quizPage = document.getElementById('quizPage');
+        const loadingPage = document.getElementById('loadingPage');
+        const resultPage = document.getElementById('resultPage');
+        const questionText = document.getElementById('questionText');
+        const questionNumberEl = document.getElementById('questionNumber');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const currentQuestionEl = document.getElementById('currentQuestion');
+        const totalQuestionsEl = document.getElementById('totalQuestions');
+        const progressFill = document.getElementById('progressFill');
+        const prevBtn = document.getElementById('prevBtn');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultQuote = document.getElementById('resultQuote');
+        const resultAnalysis = document.getElementById('resultAnalysis');
+
+        const numberTexts = ['第一', '第二', '第三', '第四', '第五', '第六', '第七', '第八', '第九', '第十',
+                            '第十一', '第十二', '第十三', '第十四', '第十五'];
+
+        function showPage(pageId) {
+            [welcomePage, quizPage, loadingPage, resultPage].forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            answerHistory = [];
+            scores = { order: 0, faith: 0, power: 0, wisdom: 0, autonomy: 0, emotion: 0, ambition: 0, endurance: 0 };
+            totalQuestionsEl.textContent = questions.length;
+            showPage('quizPage');
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const question = questions[currentQuestionIndex];
+            currentQuestionEl.textContent = currentQuestionIndex + 1;
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressFill.style.width = progress + '%';
+            questionNumberEl.textContent = numberTexts[currentQuestionIndex] + '题';
+            questionText.textContent = question.text;
+
+            optionsContainer.innerHTML = '';
+            question.options.forEach((option) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = option.text;
+                // 点击时传入该选项的分数对象
+                btn.onclick = () => handleAnswer(option.scores);
+                optionsContainer.appendChild(btn);
+            });
+
+            prevBtn.style.display = currentQuestionIndex > 0 ? 'inline-block' : 'none';
+        }
+
+        function handleAnswer(chosenScores) {
+            // 记录答案历史用于“上一题”
+            answerHistory.push({ scores: chosenScores });
+
+            // 累加分数 (这里已经删除了导致BUG的 scores.dimension 行)
+            for (const dimension in chosenScores) {
+                scores[dimension] += chosenScores[dimension];
+            }
+
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                quizPage.classList.add('fade-out');
+                setTimeout(() => {
+                    renderQuestion();
+                    quizPage.classList.remove('fade-out');
+                }, 300);
+            } else {
+                showPage('loadingPage');
+                setTimeout(() => {
+                    calculateResult();
+                    showPage('resultPage');
+                }, 2000);
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex <= 0 || answerHistory.length === 0) return;
+
+            const prevAnswer = answerHistory.pop();
+            for (const dimension in prevAnswer.scores) {
+                scores[dimension] -= prevAnswer.scores[dimension];
+            }
+
+            currentQuestionIndex--;
+            quizPage.classList.add('fade-out');
+            setTimeout(() => {
+                renderQuestion();
+                quizPage.classList.remove('fade-out');
+            }, 300);
+        }
+
+        // 使用余弦相似度匹配最符合的角色
+        function calculateResult() {
+            let bestCharacter = null;
+            let bestSimilarity = -Infinity;
+
+            for (const charId in characters) {
+                const char = characters[charId];
+                const similarity = calculateCosineSimilarity(scores, char.dimensionProfile);
+
+                if (similarity > bestSimilarity) {
+                    bestSimilarity = similarity;
+                    bestCharacter = charId;
+                }
+            }
+
+            const result = characters[bestCharacter];
+            resultTitle.textContent = result.name;
+            resultQuote.textContent = "「" + result.quote + "」";
+            resultAnalysis.textContent = result.analysis;
+        }
+
+        function calculateCosineSimilarity(vec1, vec2) {
+            let dotProduct = 0;
+            let norm1 = 0;
+            let norm2 = 0;
+
+            for (const key in vec1) {
+                dotProduct += vec1[key] * vec2[key];
+                norm1 += vec1[key] * vec1[key];
+                norm2 += vec2[key] * vec2[key];
+            }
+
+            if (norm1 === 0 || norm2 === 0) return 0;
+            return dotProduct / (Math.sqrt(norm1) * Math.sqrt(norm2));
+        }
+
+        function restartQuiz() {
+            showPage('welcomePage');
+        }
+    </script>
+</body>
+</html>
